@@ -8,6 +8,7 @@ CONFIG_FILE="config.cfg"
 BASEDIR="/opt/squid"
 MYSQLDB="squiddb"
 MYSQLUSER="squid"
+MYSQL_PWD="root@2019"  # Mật khẩu MySQL cố định
 PRIMARYKEY=18000
 DEFAULT_KEY="123"  # Giá trị key mặc định
 
