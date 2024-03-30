@@ -10,6 +10,7 @@ MYSQLDB="squiddb"
 MYSQLUSER="squid"
 MYSQL_PWD="root@2019"
 PRIMARYKEY=18000
+INTERFACE="eth0"  # Set default network interface to eth0
 
 # Function to check if script is run as root
 checkRoot() {
@@ -33,9 +34,7 @@ checkOS() {
 
 # Function to get network interface
 getInterface() {
-    echo "Available Interfaces:"
-    ls /sys/class/net/ | grep -v lo | awk '{print NR".",$1}'
-    read -p "Enter the INTERFACE to be used: " INTERFACE
+    INTERFACE="eth0"  # Set default network interface to eth0
     echo "Setting INTERFACE: $INTERFACE"
     echo "INTERFACE=$INTERFACE" >> "$BASEDIR/$CONFIG_FILE"
 }
@@ -74,7 +73,7 @@ installMariadb() {
 # Function to initialize the database
 initializeDB() {
     echo "Initializing Database structure. Please enter Password as root@2019 when prompted"
-    cat initdb.sql | mysql -u "$MYSQLUSER" -p"$MYSQL_PWD" "$MYSQLDB"
+    mysql -u "$MYSQLUSER" -p"$MYSQL_PWD" "$MYSQLDB" < initdb.sql
 }
 
 # Function to set Squid configuration
