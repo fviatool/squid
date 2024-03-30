@@ -3,11 +3,12 @@
 ### Global Variables
 OS=$(uname -s)
 DISTRIB=$(awk -F= '/^ID=/{print tolower($2)}' /etc/*release*)
-SQUID_VERSION="4.10"  # Phiên bản Squid
+SQUID_VERSION=4.8
 CONFIG_FILE="config.cfg"
 BASEDIR="/opt/squid"
 MYSQLDB="squiddb"
 MYSQLUSER="squid"
+MYSQLROOTPWD=$(pwgen -s 12 1)
 PRIMARYKEY=18000
 DEFAULT_KEY="123"  # Giá trị key mặc định
 
