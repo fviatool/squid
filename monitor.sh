@@ -1,11 +1,11 @@
 #!/bin/bash
 #####################################################################
-#######            MOnitor Script                           #########
+#######            Monitor Script                           #########
 #####################################################################
 
-###Global Variables
-OS=`uname -s`
-DISTRIB=`cat /etc/centos-release | awk '{print $1}'`
+### Global Variables
+OS=$(uname -s)
+DISTRIB=$(awk '{print $1}' /etc/centos-release)
 SQUID_VERSION=4.8
 CONFIG_FILE="/opt/squid/config.cfg"
 BASEDIR="/opt/squid"
@@ -16,14 +16,31 @@ MYSQLUSER="squid"
 MYSQL_PWD="root@2019"
 export MYSQL_PWD
 
-CDATE=`echo $(date +%F)`
-CTIME=`echo $(date +%T)`
+CDATE=$(date +%F)
+CTIME=$(date +%T)
 
-userids=`mysql -N -h localhost -u $MYSQLUSER $MYSQLDB -e "SELECT USERID from PROXYMASTER where DATE(edate) <= curdate() and TIME(etime) < curtime() ;"`
-echo "Proxy Expiry Log: $(date +%T)" >> /var/tmp/proxydelete.log
-for userid in $userids
-do
-        username=`mysql -N -h localhost -u $MYSQLUSER $MYSQLDB -e "SELECT USERNAME FROM USERMASTER WHERE USERID=$userid;"`
-        ${BASEDIR}/proxy.sh $username
-done
+# Function to generate random username
+generate_username() {
+    # Modify this function to generate a random username as per your requirements
+    # For example, you can use random strings or combine predefined words
+    # Replace this with your own logic
+    echo "user$(date +%s | sha256sum | base64 | head -c 8 ; echo)"
+}
 
+# Function to generate random password
+generate_password() {
+    # Modify this function to generate a random password as per your requirements
+    # For example, you can use random strings, numbers, and special characters
+    # Replace this with your own logic
+    echo "$(date +%s | sha256sum | base64 | head -c 12 ; echo)"
+}
+
+# Generate random username and password
+username=$(generate_username)
+password=$(generate_password)
+
+# Use the generated username and password as needed in your script
+echo "username: $username"
+echo "password: $password"
+
+# Proceed with the rest of your script
