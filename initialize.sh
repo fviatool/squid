@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bas#!/bin/bash
 
 ### Global Variables
 OS=$(uname -s)
@@ -10,7 +10,7 @@ MYSQLDB="squiddb"
 MYSQLUSER="squid"
 MYSQL_PWD="root@2019"
 PRIMARYKEY=18000
-INTERFACE="eth0"  # Set default network interface to eth0
+DEFAULT_KEY="123"  # Giá trị key mặc định
 
 # Function to check if script is run as root
 checkRoot() {
@@ -34,9 +34,8 @@ checkOS() {
 
 # Function to get network interface
 getInterface() {
-    INTERFACE="eth0"  # Set default network interface to eth0
-    echo "Setting INTERFACE: $INTERFACE"
-    echo "INTERFACE=$INTERFACE" >> "$BASEDIR/$CONFIG_FILE"
+    echo "Setting default key: $DEFAULT_KEY"
+    echo "DEFAULT_KEY=$DEFAULT_KEY" >> "$BASEDIR/$CONFIG_FILE"
 }
 
 # Function to install Squid
