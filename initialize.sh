@@ -6,6 +6,9 @@ DISTRIB=$(awk -F= '/^ID=/{print tolower($2)}' /etc/*release*)
 SQUID_VERSION=4.8
 CONFIG_FILE="config.cfg"
 BASEDIR="/opt/squid"
+MYSQLDB="squiddb"
+MYSQLUSER="squid"
+MYSQL_PWD="root@2019"
 PRIMARYKEY=18000
 
 # Function to check if script is run as root
@@ -71,7 +74,7 @@ installMariadb() {
 # Function to initialize the database
 initializeDB() {
     echo "Initializing Database structure. Please enter Password as root@2019 when prompted"
-    cat initdb.sql | mysql -u root -p
+    cat initdb.sql | mysql -u "$MYSQLUSER" -p"$MYSQL_PWD" "$MYSQLDB"
 }
 
 # Function to set Squid configuration
