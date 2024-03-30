@@ -1,7 +1,4 @@
 #!/bin/bash
-#####################################################################
-#######            Initialize Script                        #########
-#####################################################################
 
 ### Global Variables
 OS=$(uname -s)
@@ -11,7 +8,6 @@ CONFIG_FILE="config.cfg"
 BASEDIR="/opt/squid"
 MYSQLDB="squiddb"
 MYSQLUSER="squid"
-MYSQL_PWD="root@2019"
 PRIMARYKEY=18000
 DEFAULT_KEY="123"  # Giá trị key mặc định
 
@@ -69,13 +65,51 @@ installMariadb() {
     apt-get install -y mariadb-server
     systemctl enable mysql
     systemctl start mysql
-    mysql_secure_installation
+    mysql_secure_installation <<EOF
+
+y
+$MYSQLROOTPWD
+$MYSQLROOTPWD
+y
+y
+y
+y
+EOF
+}
+
+# Function to secure MySQL installation and set root password
+secureMySQL() {
+    echo "Securing MySQL installation and setting root password"
+    mysqladmin -u root password "$MYSQLROOTPWD" || {
+        echo "Failed to set MySQL root password" >&2
+        exit 1
+    }
+    mysql -u root -p"$MYSQLROOTPWD" -e "DELETE FROM mysql.user WHERE User='';" || {
+        echo "Failed to remove anonymous users" >&2
+        exit 1
+    }
+    mysql -u root -p"$MYSQLROOTPWD" -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');" || {
+        echo "Failed to disallow remote root login" >&2
+        exit 1
+    }
+    mysql -u root -p"$MYSQLROOTPWD" -e "DROP DATABASE IF EXISTS test;" || {
+        echo "Failed to remove test database" >&2
+        exit 1
+    }
+    mysql -u root -p"$MYSQLROOTPWD" -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%';" || {
+        echo "Failed to remove access to test database" >&2
+        exit 1
+    }
+    mysql -u root -p"$MYSQLROOTPWD" -e "FLUSH PRIVILEGES;" || {
+        echo "Failed to reload privileges" >&2
+        exit 1
+    }
 }
 
 # Function to initialize the database
 initializeDB() {
-    echo "Initializing Database structure. Please enter Password as root@2019 when prompted"
-    mysql -u "$MYSQLUSER" -p"$MYSQL_PWD" "$MYSQLDB" < initdb.sql
+    echo "Initializing Database structure"
+    mysql -u "$MYSQLUSER" -p"$MYSQLROOTPWD" "$MYSQLDB" < initdb.sql
 }
 
 # Function to set Squid configuration
@@ -97,6 +131,7 @@ main() {
     installSquid
     initializeFiles
     installMariadb
+    secureMySQL
     initializeDB
     setconfig
     ln -s "$BASEDIR/proxy.sh" /usr/bin/proxy
