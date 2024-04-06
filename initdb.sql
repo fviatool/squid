@@ -1,5 +1,5 @@
 create database squiddb;
-create user 'squid'@'localhost' identified by 'root@2019';
+create user 'squid'@'localhost' identified by '123';
 grant all privileges on squiddb.* to 'squid'@'localhost';
 use squiddb;
 CREATE TABLE IF NOT EXISTS `IPMASTER` (
