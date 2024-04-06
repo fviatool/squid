@@ -8,7 +8,7 @@ CONFIG_FILE="config.cfg"
 BASEDIR="/opt/squid"
 MYSQLDB="squiddb"
 MYSQLUSER="squid"
-MYSQLROOTPWD=$(pwgen -s 12 1)
+MYSQLROOTPWD=123
 PRIMARYKEY=18000
 DEFAULT_KEY="123"  # Giá trị key mặc định
 
